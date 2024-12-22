@@ -1,4 +1,4 @@
-from matrix_with_fraction import Matrix, Scalar
+from matrix_with_fraction import Matrix, Vector
 from fraction import Fraction
 
 
@@ -244,6 +244,7 @@ def test_matrix_add_matrix():
     D = A.add(B)
     assert D.get() == C
 
+
 def test_matrix_add_matrix_negative():
     A = Matrix([
         [2, 3],
@@ -255,6 +256,7 @@ def test_matrix_add_matrix_negative():
     ])
     D = A.add(B)
     assert D is None
+
 
 def test_matrix_sub_matrix():
     A = Matrix([
@@ -319,6 +321,7 @@ def test_matrix_prod_matrix_negative():
     D = A.prod(B)
     assert D is None
 
+
 def test_matrix_prod_int():
     A = Matrix([
         [-2, 3, 5],
@@ -331,6 +334,7 @@ def test_matrix_prod_int():
     ])
     D = A.prod(l)
     assert D.get() == C
+
 
 def test_matrix_transpose():
     A = Matrix([
@@ -346,3 +350,13 @@ def test_matrix_transpose():
     A_transpose = A.transpose()
     assert A_transpose.get() == AT
 
+
+def test_matrix_transposed_transpose():
+    A = Matrix([
+        [2, 3, 4],
+        [3, 4, 5],
+        [1, 2, 3],
+    ])
+    A_transpose = A.transpose()
+    A_transposed_transpose = A_transpose.transpose()
+    assert A_transposed_transpose.get() == A.get()

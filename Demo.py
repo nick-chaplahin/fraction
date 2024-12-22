@@ -1,5 +1,5 @@
 import random
-from matrix_with_fraction import Matrix,Scalar
+from matrix_with_fraction import Matrix, Vector
 from fraction import Fraction
 
 # ==================== ADDITIONAL SERVICE FUNCTIONS =====================

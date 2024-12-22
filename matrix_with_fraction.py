@@ -1,36 +1,36 @@
 from fraction import Fraction
 
-class Scalar:
-    def __init__(self, scalar):
+class Vector:
+    def __init__(self, vector):
         """
 
         :param matrix:
         """
-        if not isinstance(scalar, list):
-            print("ERROR: Parameters is not scalar")
-        if isinstance(scalar[0], list):
-            print("ERROR: Parameters is wider than scalar")
-        for idx in range(len(scalar)):
-            if not isinstance(scalar[idx], Fraction):
-                scalar[idx] = Fraction(scalar[idx])
-        self.scalar = scalar
-        self.rows = len(scalar)
+        if not isinstance(vector, list):
+            print("ERROR: Parameters is not vector")
+        if isinstance(vector[0], list):
+            print("ERROR: Parameters is wider than vector")
+        for idx in range(len(vector)):
+            if not isinstance(vector[idx], Fraction):
+                vector[idx] = Fraction(vector[idx])
+        self.vector = vector
+        self.rows = len(vector)
 
     def get_rows(self):
         return self.rows
 
     def prod(self, second):
-        if not isinstance(second, Scalar) and not isinstance(second, int) and not isinstance(second, Fraction):
-            print("ERROR: multiplier is not Scalar and not integer or Fractin")
+        if not isinstance(second, Vector) and not isinstance(second, int) and not isinstance(second, Fraction):
+            print("ERROR: multiplier is not Vector and not integer or Fractin")
             return None
-        if isinstance(second, Scalar):
-            new_scalar = []
+        if isinstance(second, Vector):
+            new_vector = []
             for idx in range(self.get_rows()):
                 tmp = Fraction(0)
                 for idy in range(second.get_rows()):
-                    tmp = tmp.add(self.scalar[idx].mul(second.scalar[idy]))
-                new_scalar.append(tmp)
-            return Scalar(new_scalar)
+                    tmp = tmp.add(self.vector[idx].mul(second.vector[idy]))
+                new_vector.append(tmp)
+            return Vector(new_vector)
 class Matrix:
 
     def __init__(self, matrix):
@@ -99,10 +99,10 @@ class Matrix:
 
     def prod(self, second):
         if not isinstance(second, Matrix) and \
-                not isinstance(second, Scalar) and \
+                not isinstance(second, Vector) and \
                 not isinstance(second, int) and \
                 not isinstance(second, Fraction):
-            print("ERROR: not a Matrix, scalar, int or Fraction")
+            print("ERROR: not a Matrix, vector, int or Fraction")
             return None
         if isinstance(second, Matrix):
             if self.get_cols() != second.get_rows():
@@ -141,8 +141,8 @@ class Matrix:
         return Matrix(new_matrix)
 
     def div(self, second):
-        if not isinstance(second, Matrix) and not isinstance(second, Scalar):
-            print("ERROR: not a matrix or scalar")
+        if not isinstance(second, Matrix) and not isinstance(second, Vector):
+            print("ERROR: not a matrix or vector")
 
     def transpose(self):
         new_matrix = []
