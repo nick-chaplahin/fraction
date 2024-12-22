@@ -3,7 +3,6 @@ from fraction import Fraction
 class Vector:
     def __init__(self, vector):
         """
-
         :param matrix:
         """
         if not isinstance(vector, list):
@@ -19,23 +18,45 @@ class Vector:
     def get_rows(self):
         return self.rows
 
+    def get(self):
+        return self.vector
+
+    def get_vector(self):
+        new_vector = []
+        for idx in range(self.rows):
+            new_vector.append(self.vector[idx].get())
+        return new_vector
+
     def prod(self, second):
         if not isinstance(second, Vector) and not isinstance(second, int) and not isinstance(second, Fraction):
-            print("ERROR: multiplier is not Vector and not integer or Fractin")
+            print("ERROR: multiplier is not Vector and not integer or Fraction")
             return None
+        if isinstance(second, int):
+            second = Fraction(second)
         if isinstance(second, Vector):
+            if self.rows != second.get_rows():
+                print("ERROR: vectors have different lengths, not multipliable")
+                return None
             new_vector = []
-            for idx in range(self.get_rows()):
+            for idx in range(self.rows):
                 tmp = Fraction(0)
                 for idy in range(second.get_rows()):
                     tmp = tmp.add(self.vector[idx].mul(second.vector[idy]))
+                tmp.bring_to_general()
                 new_vector.append(tmp)
             return Vector(new_vector)
-class Matrix:
+        if isinstance(second, Fraction):
+            new_vector = []
+            for idx in range(self.rows):
+                tmp = self.vector[idx].mul(second)
+                tmp.bring_to_general()
+                new_vector.append(tmp)
+            return Vector(new_vector)
 
+
+class Matrix:
     def __init__(self, matrix):
         """
-
         :param matrix:
         """
         if not isinstance(matrix, list):
@@ -71,10 +92,12 @@ class Matrix:
                 print("ERROR: Addition is impossible cause matrices has different dimensions")
                 return None
             new_matrix = []
-            for idx in range(self.get_rows()):
+            for idx in range(self.rows):
                 line = []
-                for idy in range(self.get_cols()):
-                    line.append(self.matrix[idx][idy].add(second.matrix[idx][idy]))
+                for idy in range(self.cols):
+                    tmp = self.matrix[idx][idy].add(second.matrix[idx][idy])
+                    tmp.bring_to_general()
+                    line.append(tmp)
                 new_matrix.append(line)
             return Matrix(new_matrix)
 
@@ -90,10 +113,12 @@ class Matrix:
                 print("ERROR: Subtraction is impossible cause matrices has different dimensions")
                 return None
             new_matrix = []
-            for idx in range(self.get_rows()):
+            for idx in range(self.rows):
                 line = []
-                for idy in range(self.get_cols()):
-                    line.append(self.matrix[idx][idy].sub(second.matrix[idx][idy]))
+                for idy in range(self.cols):
+                    tmp = self.matrix[idx][idy].sub(second.matrix[idx][idy])
+                    tmp.bring_to_general()
+                    line.append(tmp)
                 new_matrix.append(line)
             return Matrix(new_matrix)
 
@@ -104,26 +129,43 @@ class Matrix:
                 not isinstance(second, Fraction):
             print("ERROR: not a Matrix, vector, int or Fraction")
             return None
+        if isinstance(second, int):
+            second = Fraction(second)
         if isinstance(second, Matrix):
-            if self.get_cols() != second.get_rows():
+            if self.cols != second.get_rows():
                 print("ERROR: self Height doesn't match second Width, not multipliable")
                 return None
             new_matrix = []
-            for m in range(self.get_rows()):
+            for m in range(self.rows):
                 line = []
                 for p in range(second.get_cols()):
                     tmp = Fraction(0)
-                    for n in range(self.get_cols()):
+                    for n in range(self.cols):
                         tmp = tmp.add(self.matrix[m][n].mul(second.matrix[n][p]))
+                        tmp.bring_to_general()
                     line.append(tmp)
                 new_matrix.append(line)
             return Matrix(new_matrix)
-        if isinstance(second, int):
+        if isinstance(second, Fraction):
             new_matrix = self.get_matrix()
-            for m in range(self.get_rows()):
-                for p in range(self.get_cols()):
+            for m in range(self.rows):
+                for p in range(self.cols):
+                    second.bring_to_general()
                     new_matrix[m][p] = new_matrix[m][p].mul(second)
+                    new_matrix[m][p].bring_to_general()
             return Matrix(new_matrix)
+        if isinstance(second, Vector):
+            if self.cols != second.get_rows():
+                print("ERROR: Number of cols in Matrix doesn't equal to Vector's length, not multipliable")
+                return None
+            new_vector = []
+            for idx in range(self.rows):
+                tmp = Fraction(0)
+                for idy in range(self.cols):
+                    tmp = tmp.add(self.matrix[idx][idy].mul(second.vector[idy]))
+                tmp.bring_to_general()
+                new_vector.append(tmp)
+            return Vector(new_vector)
 
     def hadamard_prod(self, second):
         if not isinstance(second, Matrix):
@@ -133,9 +175,9 @@ class Matrix:
             print("ERROR: HADAMARD product impossible cause matrices has different dimensions")
             return None
         new_matrix = []
-        for idx in range(self.get_rows()):
+        for idx in range(self.rows):
             line = []
-            for idy in range(self.get_cols()):
+            for idy in range(self.cols):
                 line.append(self.matrix[idx][idy].mul(second.matrix[idx][idy]))
             new_matrix.append(line)
         return Matrix(new_matrix)

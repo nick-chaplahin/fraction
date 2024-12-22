@@ -230,16 +230,16 @@ def test_fraction_power_int():
 # ==================== Tests for Matrix =====================
 def test_matrix_add_matrix():
     A = Matrix([
-        [2, 3],
-        [3, 4]
+        [Fraction(2, 3), Fraction(3, 4)],
+        [Fraction(3, 4), Fraction(4, 5)]
     ])
     B = Matrix([
-        [4, 2],
-        [1, 0]
+        [Fraction(4,3), Fraction(2,1)],
+        [Fraction(1,2), Fraction(0, 1)]
     ])
     C = ([
-        [(6, 1), (5, 1)],
-        [(4, 1), (4, 1)]
+        [(2, 1), (11, 4)],
+        [(5, 4), (4, 5)]
     ])
     D = A.add(B)
     assert D.get() == C
@@ -260,16 +260,16 @@ def test_matrix_add_matrix_negative():
 
 def test_matrix_sub_matrix():
     A = Matrix([
-        [2, 3],
-        [3, 4]
+        [Fraction(2, 3), Fraction(3, 4)],
+        [Fraction(3, 4), Fraction(4, 5)]
     ])
     B = Matrix([
-        [4, 2],
-        [1, 0]
+        [Fraction(4, 3), Fraction(2, 1)],
+        [Fraction(1, 2), Fraction(0, 1)]
     ])
     C = ([
-        [(-2, 1), (1, 1)],
-        [(2, 1), (4, 1)]
+        [(-2, 3), (-5, 4)],
+        [(1, 4), (4, 5)]
     ])
     D = A.sub(B)
     assert D.get() == C
@@ -290,18 +290,18 @@ def test_matrix_sub_matrix_negative():
 
 def test_matrix_prod_matrix():
     A = Matrix([
-        [2, 3, 5],
-        [3, 4, 2]
+        [Fraction(2, 3), Fraction(3, 4), Fraction(5, 6)],
+        [Fraction(3, 4), Fraction(4, 5), Fraction(2, 3)]
     ])
     B = Matrix([
-        [4, 2],
-        [1, 0],
-        [5, 3]
+        [Fraction(4, 5), Fraction(2, 3)],
+        [Fraction(1, 2), Fraction(0, 1)],
+        [Fraction(5, 6), Fraction(3, 4)]
     ])
 
     C = ([
-        [(36, 1), (19, 1)],
-        [(26, 1), (12, 1)]
+        [(577, 360), (77, 72)],
+        [(14, 9), (1, 1)]
     ])
     D = A.prod(B)
     assert D.get() == C
@@ -334,6 +334,31 @@ def test_matrix_prod_int():
     ])
     D = A.prod(l)
     assert D.get() == C
+
+
+def test_matrix_prod_fraction():
+    A = Matrix([
+        [Fraction(-2, 3), Fraction(3, 4), Fraction(5,6)],
+        [Fraction(3, 4), Fraction(4, 5), Fraction(-2, 3)]
+    ])
+    l = Fraction(1,2)
+    C = ([
+        [(-1, 3), (3, 8), (5, 12)],
+        [(3, 8), (2, 5), (-1, 3)]
+    ])
+    D = A.prod(l)
+    assert D.get() == C
+
+
+def test_matrix_prod_vector():
+    A = Matrix([
+        [-2, 3, 5],
+        [3, 4, -2]
+    ])
+    B = Vector([2, 3, 4])
+    C = ([(25, 1), (10, 1)])
+    D = A.prod(B)
+    assert D.get_vector() == C
 
 
 def test_matrix_transpose():
