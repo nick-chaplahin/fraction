@@ -182,10 +182,6 @@ class Matrix:
             new_matrix.append(line)
         return Matrix(new_matrix)
 
-    def div(self, second):
-        if not isinstance(second, Matrix) and not isinstance(second, Vector):
-            print("ERROR: not a matrix or vector")
-
     def transpose(self):
         new_matrix = []
         for idx in range(self.cols):
@@ -194,6 +190,24 @@ class Matrix:
                 new_line.append(self.matrix[idy][idx])
             new_matrix.append(new_line)
         return Matrix(new_matrix)
+
+    def trace(self):
+        if self.rows != self.cols:
+            print("ERROR: Matrix is not square, trace of main diagonal is not available")
+            return None
+        trace = Fraction(0)
+        for idx in range(self.rows):
+            trace = trace.add(self.matrix[idx][idx])
+        trace.bring_to_general()
+        return trace
+
+    def euclidean_norm_base(self):
+        sum = Fraction(0)
+        for idx in range(self.rows):
+            for idy in range(self.cols):
+                sum = sum.add(self.matrix[idx][idy].mul(self.matrix[idx][idy]))
+        sum.bring_to_general()
+        return (sum.get())
 
     def get(self):
         new_matrix = []

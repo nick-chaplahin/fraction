@@ -385,3 +385,66 @@ def test_matrix_transposed_transpose():
     A_transpose = A.transpose()
     A_transposed_transpose = A_transpose.transpose()
     assert A_transposed_transpose.get() == A.get()
+
+
+def test_matrix_E_transpose():
+    A = Matrix([
+        [1, 0, 0],
+        [0, 1, 0],
+        [0, 0, 1],
+    ])
+    A_transpose = A.transpose()
+    assert A_transpose.get() == A.get()
+
+
+def test_matrix_euclidean_norm_base():
+    A = Matrix([
+        [2, 3, 4],
+        [1, 4, 5],
+        [3, 2, 3],
+        [2, 1, 2]
+    ])
+    a_norm = A.euclidean_norm_base()
+    assert a_norm == (102, 1)
+
+
+def test_matrix_trace_positive():
+    A = Matrix([
+        [Fraction(2, 3), Fraction(3, 4), Fraction(4, 5)],
+        [Fraction(3, 4), Fraction(4, 5), Fraction(5, 6)],
+        [Fraction(1, 2), Fraction(2, 3), Fraction(3, 4)],
+    ])
+    tr_A = A.trace()
+    assert tr_A.get() == (133, 60)
+
+
+def test_matrix_trace_negative():
+    A = Matrix([
+        [Fraction(2, 3), Fraction(3, 4), Fraction(4, 5)],
+        [Fraction(3, 4), Fraction(4, 5), Fraction(5, 6)],
+    ])
+    tr_A = A.trace()
+    assert tr_A is None
+
+
+def test_matrix_trace_nontracable():
+    A = Matrix([
+        [Fraction(2, 3), Fraction(3, 4), Fraction(4, 5)],
+        [Fraction(3, 4), Fraction(-4, 5), Fraction(5, 6)],
+        [Fraction(1, 2), Fraction(2, 3), Fraction(2, 15)],
+    ])
+    tr_A = A.trace()
+    assert tr_A.get() == (0, 1)
+
+
+def test_matrix_frobenius_norm_with_trace():
+    A = Matrix([
+        [Fraction(2, 3), Fraction(3, 4), Fraction(4, 5)],
+        [Fraction(3, 4), Fraction(-4, 5), Fraction(5, 6)],
+        [Fraction(1, 2), Fraction(2, 3), Fraction(2, 15)],
+    ])
+    A_euclid_norm_base = A.euclidean_norm_base()
+    step1 = A.transpose()
+    step2 = A.prod(step1)
+    A_frobenius_norm_base = step2.trace()
+    assert A_euclid_norm_base == A_frobenius_norm_base.get()
