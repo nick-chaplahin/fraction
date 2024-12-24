@@ -1,7 +1,7 @@
 import random
 from matrix_with_fraction import Matrix, Vector
 from fraction import Fraction
-
+import numpy as np
 
 # ==================== ADDITIONAL SERVICE FUNCTIONS =====================
 def generate_matrix(rows=random.randint(2,10), cols=random.randint(2,10), max_data=20):
@@ -36,6 +36,8 @@ def frac_description(frac, structure):
                                                                                 frac.get_absolute_result()))
 
 
+
+
 def Matrix_Demo():
    A = Matrix(generate_matrix(3,5))
    B = Matrix(generate_matrix(5,2))
@@ -48,6 +50,40 @@ def Matrix_Demo():
    B.describe()
    D.describe()
    E.describe()
+
+
+def Matrix_Fractions_Demo():
+    A = Matrix([
+        [3, 6, 9],
+        [4, 8, 12],
+        [5, 7, 11]
+    ])
+    print("Original Matrix Values{}".format(A.get_matrix_frac_values()))
+    print("Original Matrix Absolute Values {}".format(A.get_matrix_absolute_values()))
+    multiplier_1 = Fraction(1, 6)
+    print("Multiplier 1 :{}/{}".format(multiplier_1.get_numerator(), multiplier_1.get_denominator()))
+    multiplier_2 = Fraction(5, 1)
+    print("Multiplier 2 :{}/{}".format(multiplier_2.get_numerator(), multiplier_2.get_denominator()))
+    multiplier_3 = Fraction(1, 5)
+    print("Multiplier 3 :{}/{}".format(multiplier_3.get_numerator(), multiplier_3.get_denominator()))
+    multiplier_4 = Fraction(6, 1)
+    print("Multiplier 4 :{}/{}".format(multiplier_4.get_numerator(), multiplier_4.get_denominator()))
+    print("========== STEP 1. Multiply matrix by Multiplier 1")
+    B = A.prod(multiplier_1)
+    print("Matrix after operation: {}".format(B.get_matrix_frac_values()))
+    print("========== STEP 2. Multiply matrix by Multiplier 2")
+    B = B.prod(multiplier_2)
+    print("Matrix after operation: {}".format(B.get_matrix_frac_values()))
+    print("========== STEP 3. Multiply matrix by Multiplier 3")
+    B = B.prod(multiplier_3)
+    print("Matrix after operation: {}".format(B.get_matrix_frac_values()))
+    print("========== STEP 4. Multiply matrix by Multiplier 4")
+    B = B.prod(multiplier_4)
+    print("Matrix after operation: {}".format(B.get_matrix_frac_values()))
+    print("Resulting Matrix Values: {}".format(B.get_matrix_absolute_values()))
+    print("Original Matrix Values: {}".format(A.get_matrix_absolute_values()))
+
+
 
 
 def Fraction_Demo():
@@ -99,3 +135,5 @@ def Fraction_Demo():
 Matrix_Demo()
 
 Fraction_Demo()
+
+Matrix_Fractions_Demo()

@@ -226,7 +226,7 @@ class Matrix:
             e_matrix[idx][idx] = (1,1)
         transpose = self.transpose()
         prod_result = self.prod(transpose)
-        if prod_result.get_matrix_values() == e_matrix:
+        if prod_result.get_matrix_frac_values() == e_matrix:
             return True
         else:
             return False
@@ -240,12 +240,21 @@ class Matrix:
             new_matrix.append(line)
         return new_matrix
 
-    def get_matrix_values(self):
+    def get_matrix_frac_values(self):
         new_matrix = []
         for idx in range(self.rows):
             line = []
             for idy in range(self.cols):
                 line.append(self.matrix[idx][idy].get())
+            new_matrix.append(line)
+        return new_matrix
+
+    def get_matrix_absolute_values(self):
+        new_matrix = []
+        for idx in range(self.rows):
+            line = []
+            for idy in range(self.cols):
+                line.append(self.matrix[idx][idy].get_absolute_result())
             new_matrix.append(line)
         return new_matrix
 
