@@ -2,6 +2,7 @@ import random
 from matrix_with_fraction import Matrix, Vector
 from fraction import Fraction
 
+
 # ==================== ADDITIONAL SERVICE FUNCTIONS =====================
 def generate_matrix(rows=random.randint(2,10), cols=random.randint(2,10), max_data=20):
     matrix = []
@@ -12,11 +13,13 @@ def generate_matrix(rows=random.randint(2,10), cols=random.randint(2,10), max_da
         matrix.append(line)
     return matrix.copy()
 
+
 def generate_scalar(rows=random.randint(2,10), max_data=20):
     matrix = []
     for idx in range(rows):
         matrix.append(Fraction(random.randint(1,max_data)))
     return matrix.copy()
+
 
 def frac_description(frac, structure):
     """
@@ -45,6 +48,7 @@ def Matrix_Demo():
    B.describe()
    D.describe()
    E.describe()
+
 
 def Fraction_Demo():
     print("\n========== EXAMPLE 1 =====")
@@ -91,5 +95,7 @@ def Fraction_Demo():
     frac = fracB.power(-2)
     frac_description(frac, "fracB.power(-2)")
 
+
 Matrix_Demo()
+
 Fraction_Demo()

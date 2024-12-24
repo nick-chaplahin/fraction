@@ -207,7 +207,7 @@ class Matrix:
             for idy in range(self.cols):
                 sum = sum.add(self.matrix[idx][idy].mul(self.matrix[idx][idy]))
         sum.bring_to_general()
-        return (sum.get())
+        return sum.get()
 
     def get(self):
         new_matrix = []
@@ -218,12 +218,34 @@ class Matrix:
             new_matrix.append(line)
         return new_matrix
 
+    def is_ortogonal(self):
+        if self.rows != self.cols:
+            return False
+        e_matrix = [[(0,1) for idy in range(self.cols)] for idx in range(self.rows)]
+        for idx in range(self.rows):
+            e_matrix[idx][idx] = (1,1)
+        transpose = self.transpose()
+        prod_result = self.prod(transpose)
+        if prod_result.get_matrix_values() == e_matrix:
+            return True
+        else:
+            return False
+
     def get_matrix(self):
         new_matrix = []
         for idx in range(self.rows):
             line = []
             for idy in range(self.cols):
                 line.append(self.matrix[idx][idy])
+            new_matrix.append(line)
+        return new_matrix
+
+    def get_matrix_values(self):
+        new_matrix = []
+        for idx in range(self.rows):
+            line = []
+            for idy in range(self.cols):
+                line.append(self.matrix[idx][idy].get())
             new_matrix.append(line)
         return new_matrix
 

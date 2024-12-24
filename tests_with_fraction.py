@@ -448,3 +448,55 @@ def test_matrix_frobenius_norm_with_trace():
     step2 = A.prod(step1)
     A_frobenius_norm_base = step2.trace()
     assert A_euclid_norm_base == A_frobenius_norm_base.get()
+
+def test_matrix_ortogonal_i():
+    A = Matrix([
+        [1, 0, 0, 0],
+        [0, 1, 0, 0],
+        [0, 0, 1, 0],
+        [0, 0, 0, 1]
+    ])
+
+    assert A.is_ortogonal()
+
+
+def test_matrix_ortogonal_E():
+    A = Matrix([
+        [1, 0, 0, 0],
+        [0, 0, 0, 1],
+        [0, 0, 1, 0],
+        [0, 1, 0, 0]
+    ])
+
+    assert A.is_ortogonal()
+
+
+def test_matrix_ortogonal_val():
+    A = Matrix([
+        [Fraction(1, 2), Fraction(1, 2), Fraction(1, 2), Fraction(-1, 2)],
+        [Fraction(-1, 2), Fraction(1, 2), Fraction(1, 2), Fraction(1, 2)],
+        [Fraction(1, 2), Fraction(-1, 2), Fraction(1, 2), Fraction(1, 2)],
+        [Fraction(1, 2), Fraction(1, 2), Fraction(-1, 2), Fraction(1, 2)],
+    ])
+
+    assert A.is_ortogonal()
+
+def test_matrix_ortogonal_val_negative():
+    A = Matrix([
+        [Fraction(1, 2), Fraction(1, 2), Fraction(1, 2), Fraction(-1, 2)],
+        [Fraction(1, 2), Fraction(1, 2), Fraction(1, 2), Fraction(1, 2)],
+        [Fraction(1, 2), Fraction(-1, 2), Fraction(1, 2), Fraction(1, 2)],
+        [Fraction(1, 2), Fraction(1, 2), Fraction(-1, 2), Fraction(1, 2)],
+    ])
+
+    assert not A.is_ortogonal()
+
+def test_matrix_ortogonal_negative():
+    A = Matrix([
+        [1, 0, 0],
+        [0, 1, 0],
+        [0, 0, 1],
+        [0, 0, 0]
+    ])
+
+    assert not A.is_ortogonal()
