@@ -63,13 +63,18 @@ class Matrix:
             print("ERROR: Parameters is not an array")
         if not isinstance(matrix[0], list):
             print("ERROR: Parameters is not a matrix")
+        new_matrix = []
         for idx in range(len(matrix)):
+            line = []
             for idy in range(len(matrix[0])):
                 if not isinstance(matrix[idx][idy], Fraction):
-                    matrix[idx][idy] = Fraction(matrix[idx][idy])
-        self.matrix = matrix
-        self.rows = len(matrix)
-        self.cols = len(matrix[0])
+                    line.append(Fraction(matrix[idx][idy]))
+                else:
+                    line.append(matrix[idx][idy])
+            new_matrix.append(line)
+        self.matrix = new_matrix
+        self.rows = len(new_matrix)
+        self.cols = len(new_matrix[0])
 
     def get_rows(self):
         return self.rows

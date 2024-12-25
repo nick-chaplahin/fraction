@@ -3,21 +3,22 @@ from matrix_with_fraction import Matrix, Vector
 from fraction import Fraction
 import numpy as np
 
+
 # ==================== ADDITIONAL SERVICE FUNCTIONS =====================
-def generate_matrix(rows=random.randint(2,10), cols=random.randint(2,10), max_data=20):
+def generate_matrix(rows=random.randint(2, 10), cols=random.randint(2, 10), max_data=20):
     matrix = []
     for idx in range(rows):
         line = []
         for idy in range(cols):
-            line.append(Fraction(random.randint(1,max_data)))
+            line.append(Fraction(random.randint(1, max_data)))
         matrix.append(line)
     return matrix.copy()
 
 
-def generate_scalar(rows=random.randint(2,10), max_data=20):
+def generate_scalar(rows=random.randint(2, 10), max_data=20):
     matrix = []
     for idx in range(rows):
-        matrix.append(Fraction(random.randint(1,max_data)))
+        matrix.append(Fraction(random.randint(1, max_data)))
     return matrix.copy()
 
 
@@ -36,54 +37,48 @@ def frac_description(frac, structure):
                                                                                 frac.get_absolute_result()))
 
 
-
-
-def Matrix_Demo():
-   A = Matrix(generate_matrix(3,5))
-   B = Matrix(generate_matrix(5,2))
-   B2 = Matrix(generate_matrix(3,5))
-   C = A.transpose()
-   D = A.prod(B)
-   E = A.hadamard_prod(B2)
-   A.describe()
-   C.describe()
-   B.describe()
-   D.describe()
-   E.describe()
-
-
 def Matrix_Fractions_Demo():
-    A = Matrix([
+    print("\n\n==================== OPERATION WITH MATRIX OF FRACTIONS AND COMPARE RESULT WITH NUMPY")
+    matrix = [
         [3, 6, 9],
         [4, 8, 12],
         [5, 7, 11]
-    ])
-    print("Original Matrix Values{}".format(A.get_matrix_frac_values()))
-    print("Original Matrix Absolute Values {}".format(A.get_matrix_absolute_values()))
-    multiplier_1 = Fraction(1, 6)
+    ]
+    A = Matrix(matrix)
+    A_np = np.matrix(matrix)
+    print("Original Matrix Values \n {}".format(np.matrix(matrix)))
+    print("Numpy Matrix Values \n {}".format(A_np))
+    print("Fraction Matrix Absolute Values \n {}".format(np.matrix(A.get_matrix_absolute_values())))
+    multiplier_1 = Fraction(1, 7)
     print("Multiplier 1 :{}/{}".format(multiplier_1.get_numerator(), multiplier_1.get_denominator()))
-    multiplier_2 = Fraction(5, 1)
+    multiplier_2 = Fraction(1, 13)
     print("Multiplier 2 :{}/{}".format(multiplier_2.get_numerator(), multiplier_2.get_denominator()))
-    multiplier_3 = Fraction(1, 5)
+    multiplier_3 = Fraction(7, 1)
     print("Multiplier 3 :{}/{}".format(multiplier_3.get_numerator(), multiplier_3.get_denominator()))
-    multiplier_4 = Fraction(6, 1)
+    multiplier_4 = Fraction(13, 1)
     print("Multiplier 4 :{}/{}".format(multiplier_4.get_numerator(), multiplier_4.get_denominator()))
     print("========== STEP 1. Multiply matrix by Multiplier 1")
     B = A.prod(multiplier_1)
-    print("Matrix after operation: {}".format(B.get_matrix_frac_values()))
+    B_np = (1.0/7.0) * A_np
+    print("Fraction Matrix after operation: \n {}".format(np.matrix(B.get_matrix_absolute_values())))
+    print("Numpy    Matrix after operation: \n {}".format(B_np))
     print("========== STEP 2. Multiply matrix by Multiplier 2")
     B = B.prod(multiplier_2)
-    print("Matrix after operation: {}".format(B.get_matrix_frac_values()))
+    B_np = (1.0/13.0) * B_np
+    print("Fraction Matrix after operation: \n {}".format(np.matrix(B.get_matrix_absolute_values())))
+    print("Numpy    Matrix after operation: \n {}".format(B_np))
     print("========== STEP 3. Multiply matrix by Multiplier 3")
     B = B.prod(multiplier_3)
-    print("Matrix after operation: {}".format(B.get_matrix_frac_values()))
+    B_np = 7.0 * B_np
+    print("Fraction Matrix after operation: \n {}".format(np.matrix(B.get_matrix_absolute_values())))
+    print("Numpy    Matrix after operation: \n {}".format(B_np))
     print("========== STEP 4. Multiply matrix by Multiplier 4")
     B = B.prod(multiplier_4)
-    print("Matrix after operation: {}".format(B.get_matrix_frac_values()))
-    print("Resulting Matrix Values: {}".format(B.get_matrix_absolute_values()))
-    print("Original Matrix Values: {}".format(A.get_matrix_absolute_values()))
-
-
+    B_np = 13.0 * B_np
+    print("Fraction Matrix after operation: \n {}".format(np.matrix(B.get_matrix_absolute_values())))
+    print("Numpy    Matrix after operation: \n {}".format(B_np))
+    print("Resulting Fraction Matrix Values: \n {}".format(np.matrix(B.get_matrix_absolute_values())))
+    print("Original Matrix Values: \n {}".format(np.matrix(A.get_matrix_absolute_values())))
 
 
 def Fraction_Demo():
@@ -131,8 +126,18 @@ def Fraction_Demo():
     frac = fracB.power(-2)
     frac_description(frac, "fracB.power(-2)")
 
+    print("\n ===== 1/7 * 1/13 * 7 * 13 ==========")
+    frac_A = Fraction(1,7)
+    num_a = 1/7
+    frac_B = Fraction(11,13)
+    num_b = 11/13
+    frac_C = frac_A.mul(frac_B)
+    num_c = num_a * num_b
+    frac_C = frac_C.mul(7).mul(13)
+    num_c = num_c * 7 * 13
+    frac_description(frac_C, "1/ * 11/13 * 7 * 13")
+    print (" Result after consecutive math execution of operations: {}".format(num_c))
 
-Matrix_Demo()
 
 Fraction_Demo()
 
