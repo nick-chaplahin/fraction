@@ -31,7 +31,7 @@ def matrix_description(matrix):
     return"[{}]".format(line)
 
 
-def Matrix_Fractions_Demo():
+def Matrix_Fractions_Demo_integers():
     print("\n\n==================== OPERATION WITH MATRIX OF FRACTIONS AND COMPARE RESULT WITH NUMPY")
     matrix = [
         [3, 6, 9],
@@ -40,6 +40,53 @@ def Matrix_Fractions_Demo():
     ]
     A = Matrix(matrix)
     A_np = np.matrix(matrix)
+    print("Fraction Matrix Values: \n {}".format(matrix_description(A)))
+    print("Numpy Matrix Values: \n {}".format(A_np))
+    multiplier_1 = Fraction(1, 7)
+    print("Multiplier 1: {}/{}".format(multiplier_1.get_numerator(), multiplier_1.get_denominator()))
+    multiplier_2 = Fraction(1, 13)
+    print("Multiplier 2: {}/{}".format(multiplier_2.get_numerator(), multiplier_2.get_denominator()))
+    multiplier_3 = Fraction(7, 1)
+    print("Multiplier 3: {}/{}".format(multiplier_3.get_numerator(), multiplier_3.get_denominator()))
+    multiplier_4 = Fraction(13, 1)
+    print("Multiplier 4: {}/{}".format(multiplier_4.get_numerator(), multiplier_4.get_denominator()))
+    print("========== STEP 1. Multiply matrix by 1/7")
+    B = A.prod(multiplier_1)
+    B_np = (1/7) * A_np
+    print("Fraction Matrix * 1/7: \n {}".format(matrix_description(B)))
+    print("Numpy    Matrix * 1/7: \n {}".format(B_np))
+    print("========== STEP 2. Multiply matrix by 1/13")
+    B = B.prod(multiplier_2)
+    B_np = (1/13) * B_np
+    print("Fraction Matrix * 1/13: \n {}".format(matrix_description(B)))
+    print("Numpy    Matrix * 1/13: \n {}".format(B_np))
+    print("========== STEP 3. Multiply matrix by Multiplier 3")
+    B = B.prod(multiplier_3)
+    B_np = 7.0 * B_np
+    print("Fraction Matrix * 7: \n {}".format(matrix_description(B)))
+    print("Numpy    Matrix * 7: \n {}".format(B_np))
+    print("========== STEP 4. Multiply matrix by Multiplier 4")
+    B = B.prod(multiplier_4)
+    B_np = 13.0 * B_np
+    print("Fraction Matrix * 13: \n {}".format(matrix_description(B)))
+    print("Numpy    Matrix * 13: \n {}".format(B_np))
+    print("Resulting Fraction Matrix Values: \n {}".format(np.matrix(B.get_matrix_absolute_values())))
+
+
+def Matrix_Fractions_Demo_fractions():
+    print("\n\n==================== OPERATION WITH MATRIX OF FRACTIONS AND COMPARE RESULT WITH NUMPY")
+    matrix = [
+        [Fraction(1, 3), Fraction(1, 6), Fraction(1, 9)],
+        [Fraction(1, 4), Fraction(1, 8), Fraction(1, 12)],
+        [Fraction(1, 5), Fraction(1, 7), Fraction(1, 11)]
+    ]
+    matrix_np = [
+        [1/3, 1/6, 1/9],
+        [1/4, 1/8, 1/12],
+        [1/5, 1/7, 1/11]
+    ]
+    A = Matrix(matrix)
+    A_np = np.matrix(matrix_np)
     print("Fraction Matrix Values: \n {}".format(matrix_description(A)))
     print("Numpy Matrix Values: \n {}".format(A_np))
     multiplier_1 = Fraction(1, 7)
@@ -118,11 +165,11 @@ def Fraction_Demo():
     frac = fracB.power(-2)
     frac_description(frac, "fracB.power(-2)")
 
-    print("\n ===== 1/7 * 1/13 * 7 * 13 ==========")
-    frac_A = Fraction(1,7)
+    print("\n ===== 1/7 * 11/13 * 7 * 13 ==========")
+    frac_A = Fraction(1, 7)
     num_a = 1/7
     print(num_a)
-    frac_B = Fraction(11,13)
+    frac_B = Fraction(11, 13)
     num_b = 11/13
     print(num_b)
     frac_C = frac_A.mul(frac_B)
@@ -130,10 +177,27 @@ def Fraction_Demo():
     print(num_c)
     frac_C = frac_C.mul(7).mul(13)
     num_c = num_c * 7 * 13
-    frac_description(frac_C, "1/ * 11/13 * 7 * 13")
-    print (" Result after consecutive Python math execution of operations: {}".format(num_c))
+    frac_description(frac_C, "1/7 * 11/13 * 7 * 13")
+    print(" Result after consecutive Python math execution of operations: {}".format(num_c))
 
+    print("\n ===== 7/13 * 1/7 * 11/13 * 7 * 13 ==========")
+    frac_base = Fraction(7, 13)
+    num_base = 7/13
+    frac_A = Fraction(1, 7)
+    num_a = 1/7
+    print(num_a)
+    frac_B = Fraction(11, 13)
+    num_b = 11/13
+    print(num_b)
+    frac_C = frac_base.mul(frac_A).mul(frac_B)
+    num_c = num_base * num_a * num_b
+    print(num_c)
+    frac_C = frac_C.mul(7).mul(13)
+    num_c = num_c * 7 * 13
+    frac_description(frac_C, "7/13 * 1/7 * 11/13 * 7 * 13")
+    print(" Result after consecutive Python math execution of operations: {}".format(num_c))
 
 Fraction_Demo()
 
-Matrix_Fractions_Demo()
+Matrix_Fractions_Demo_integers()
+Matrix_Fractions_Demo_fractions()
