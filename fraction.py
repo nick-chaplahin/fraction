@@ -23,7 +23,7 @@ class Fraction:
             denominator = 1
         if denominator is None:
             print("ERROR: Denominator is None, Fraction can not be initiated")
-            return N0ne
+            return None
         if denominator == 0:
             print("ERROR: Denominator is 0, number can not be initiated")
             return None
@@ -106,6 +106,8 @@ class Fraction:
                 isinstance(second.denominator, Fraction):
             print("ERROR: Fractions must be simplified before operations!")
             return None
+        if isinstance(second, int):
+            second = Fraction(second)
         numerator = (self.numerator * second.denominator +
                      second.numerator * self.denominator)
         denominator = self.denominator * second.denominator
@@ -124,6 +126,8 @@ class Fraction:
                 isinstance(second.denominator, Fraction):
             print("ERROR: Fractions musct be simplified before operations!")
             return None
+        if isinstance(second, int):
+            second = Fraction(second)
         numerator = (self.numerator * second.denominator -
                      second.numerator * self.denominator)
         denominator = self.denominator * second.denominator
@@ -142,6 +146,8 @@ class Fraction:
                 isinstance(second.denominator, Fraction):
             print("ERROR: Fractions musct be simplified before operations!")
             return None
+        if isinstance(second, int):
+            second = Fraction(second)
         numerator = self.numerator * second.numerator
         denominator = self.denominator * second.denominator
         return Fraction(numerator, denominator)
@@ -190,8 +196,83 @@ class Fraction:
             return Fraction(denominator, numerator)
         return Fraction(self.numerator ** power, self.denominator ** power)
 
-    # ============================== Getters and Describe operations
+    def equal(self, second):
+        if isinstance(self.numerator, Fraction) or \
+                isinstance(self.denominator, Fraction) or \
+                isinstance(second.numerator, Fraction) or \
+                isinstance(second.denominator, Fraction):
+            print("ERROR: Fractions musct be simplified before operations!")
+            return None
+        if isinstance(second, int):
+            second = Fraction(second)
+        if second is not None:
+            if self.numerator * second.get_denominator() == second.get_numerator() * self.denominator:
+                return True
+            else:
+                return False
+        return False
 
+    def notequal(self, second):
+        if isinstance(self.numerator, Fraction) or \
+                isinstance(self.denominator, Fraction) or \
+                isinstance(second.numerator, Fraction) or \
+                isinstance(second.denominator, Fraction):
+            print("ERROR: Fractions musct be simplified before operations!")
+            return None
+        if isinstance(second, int):
+            second = Fraction(second)
+        if second is not None:
+            if self.numerator * second.get_denominator() != second.get_numerator() * self.denominator:
+                return True
+            else:
+                return False
+        return False
+
+    def bigger(self, second, bigger_equal=False):
+        if isinstance(self.numerator, Fraction) or \
+                isinstance(self.denominator, Fraction) or \
+                isinstance(second.numerator, Fraction) or \
+                isinstance(second.denominator, Fraction):
+            print("ERROR: Fractions musct be simplified before operations!")
+            return None
+        if isinstance(second, int):
+            second = Fraction(second)
+        if second is not None:
+            if bigger_equal:
+                if self.numerator * second.get_denominator() >+ second.get_numerator() * self.denominator:
+                    return True
+                else:
+                    return False
+            else:
+                if self.numerator * second.get_denominator() > second.get_numerator() * self.denominator:
+                    return True
+                else:
+                    return False
+        return False
+
+    def less(self, second, less_equal=False):
+        if isinstance(self.numerator, Fraction) or \
+                isinstance(self.denominator, Fraction) or \
+                isinstance(second.numerator, Fraction) or \
+                isinstance(second.denominator, Fraction):
+            print("ERROR: Fractions musct be simplified before operations!")
+            return None
+        if isinstance(second, int):
+            second = Fraction(second)
+        if second is not None:
+            if less_equal:
+                if self.numerator * second.get_denominator() <= second.get_numerator() * self.denominator:
+                    return True
+                else:
+                    return False
+            else:
+                if self.numerator * second.get_denominator() < second.get_numerator() * self.denominator:
+                    return True
+                else:
+                    return False
+        return False
+
+    # ============================== Getters and Describe operations
     def get_numerator(self):
         """
             Returns numerator of the Fraction

@@ -1,6 +1,6 @@
-from matrix_with_fraction import Matrix, Vector
+from matrix_with_fraction import *
 from fraction import Fraction
-
+import pytest
 
 # ==================== Tests for Fraction =====================
 def test_fraction_create_from_int():
@@ -107,9 +107,16 @@ def test_fraction_add_fraction_to_fraction():
     assert c.get() == (10, 8)
 
 
-def test_fraction_add_fraction_to_int():
+def test_fraction_add_fraction_to_short_fraction():
     a = Fraction(3, 4)
     b = Fraction(3)
+    c = a.add(b)
+    assert c.get() == (15, 4)
+
+
+def test_fraction_add_fraction_to_int():
+    a = Fraction(3, 4)
+    b = 3
     c = a.add(b)
     assert c.get() == (15, 4)
 
@@ -145,9 +152,17 @@ def test_fraction_sub_negative_fraction():
     assert c.get() == (202, 161)
 
 
-def test_negative_fraction_sub_int():
+def test_negative_fraction_sub_short_fraction():
     a = Fraction(5, 8)
     b = Fraction(3)
+    c = a.sub(b)
+    c.bring_to_general()
+    assert c.get() == (-19, 8)
+
+
+def test_negative_fraction_sub_int():
+    a = Fraction(5, 8)
+    b = 3
     c = a.sub(b)
     c.bring_to_general()
     assert c.get() == (-19, 8)
@@ -167,9 +182,16 @@ def test_negative_fraction_mul_fraction():
     assert c.get() == (-15, 14)
 
 
-def test_fraction_mul_int():
+def test_fraction_mul_short_fraction():
     a = Fraction(5, 7)
     b = Fraction(3)
+    c = a.mul(b)
+    assert c.get() == (15, 7)
+
+
+def test_fraction_mul_int():
+    a = Fraction(5, 7)
+    b = 3
     c = a.mul(b)
     assert c.get() == (15, 7)
 
@@ -195,9 +217,16 @@ def test_fraction_div_fraction():
     assert c.get() == (14, 45)
 
 
-def test_fraction_div_int():
+def test_fraction_div_short_fraction():
     a = Fraction(5, 2)
     b = Fraction(2)
+    c = a.div(b)
+    assert c.get() == (5, 4)
+
+
+def test_fraction_div_int():
+    a = Fraction(5, 2)
+    b = 2
     c = a.div(b)
     assert c.get() == (5, 4)
 
@@ -481,6 +510,7 @@ def test_matrix_ortogonal_val():
 
     assert A.is_ortogonal()
 
+
 def test_matrix_ortogonal_val_negative():
     A = Matrix([
         [Fraction(1, 2), Fraction(1, 2), Fraction(1, 2), Fraction(-1, 2)],
@@ -491,6 +521,7 @@ def test_matrix_ortogonal_val_negative():
 
     assert not A.is_ortogonal()
 
+
 def test_matrix_ortogonal_negative():
     A = Matrix([
         [1, 0, 0],
@@ -500,3 +531,193 @@ def test_matrix_ortogonal_negative():
     ])
 
     assert not A.is_ortogonal()
+
+
+@pytest.mark.skipif(matrix_version_num < 1.0, reason="Functionality is not supported in this version")
+def test_matrix_determinant_has_zeros():
+    A = Matrix([
+        [0, 2, 1],
+        [1, 0, 3],
+        [4, 5, 6]
+    ])
+
+    assert A.determinant().get() == (17, 1)
+
+
+@pytest.mark.skipif(matrix_version_num < 1.0, reason="Functionality is not supported in this version")
+def test_matrix_determinant_no_zeros():
+    A = Matrix([
+        [1, 2, 3],
+        [1, -3, 2],
+        [1, 1, 1]
+    ])
+    assert A.determinant().get() == (9, 1)
+
+
+@pytest.mark.skipif(matrix_version_num < 1.0, reason="Functionality is not supported in this version")
+def test_matrix_determinant_negative():
+    A = Matrix([
+        [1, 2, 3, 4],
+        [1, -3, 2,3 ],
+        [1, 1, 1, 2]
+    ])
+    assert A.determinant() is None
+
+
+@pytest.mark.skipif(matrix_version_num < 1.0, reason="Functionality is not supported in this version")
+def test_matrix_determinant_transponded():
+    A = Matrix([
+        [1, 2, 3],
+        [1, -3, 2],
+        [1, 1, 1]
+    ])
+    B = A.transpose()
+    assert A.determinant().get() == B.determinant().get()
+
+
+@pytest.mark.skipif(matrix_version_num < 1.0, reason="Functionality is not supported in this version")
+def test_matrix_determinant_4x4():
+    matrix = [
+        [1, 2, 3, -4],
+        [1, -3, 2, 3],
+        [1, 1, 1, 2],
+        [5, 2, -1, 2]
+    ]
+    A = Matrix(matrix)
+    assert A.determinant().get() == (-234, 1)
+
+
+@pytest.mark.skipif(matrix_version_num < 1.0, reason="Functionality is not supported in this version")
+def test_matrix_determinant_rows_swap():
+    matrix = [
+        [1, 2, 3, -4],
+        [1, -3, 2, 3],
+        [1, 1, 1, 2],
+        [5, 2, -1, 2]
+    ]
+    A = Matrix(matrix)
+    matrix_swap_rows = [matrix[1], matrix[3], matrix[0], matrix[2]]
+    B = Matrix(matrix_swap_rows)
+    assert A.determinant().get_numerator() == -B.determinant().get_numerator()
+
+
+@pytest.mark.skipif(matrix_version_num < 1.0, reason="Functionality is not supported in this version")
+def test_matrix_determinant_zero_row():
+    A = Matrix([
+        [1, 2, 3, -4],
+        [0, 0, 0, 0],
+        [1, 1, 1, 2],
+        [5, 2, -1, 2]
+    ])
+    assert A.determinant().get() == (0, 1)
+
+
+@pytest.mark.skipif(matrix_version_num < 1.0, reason="Functionality is not supported in this version")
+def test_matrix_determinant_zero_column():
+    A = Matrix([
+        [1, 2, 0, -4],
+        [1, -3, 0, 3],
+        [1, 1, 0, 2],
+        [5, 2, 0, 2]
+    ])
+    assert A.determinant().get() == (0, 1)
+
+
+@pytest.mark.skipif(matrix_version_num < 1.0, reason="Functionality is not supported in this version")
+def test_matrix_determinant_I():
+    A = Matrix([
+        [1, 0, 0, 0],
+        [0, 1, 0, 0],
+        [0, 0, 1, 0],
+        [0, 0, 0, 1]
+    ])
+    assert A.determinant().get() == (1, 1)
+
+
+@pytest.mark.skipif(matrix_version_num < 1.0, reason="Functionality is not supported in this version")
+def test_matrix_minors():
+    matrix = [
+        [Fraction(1), Fraction(2), Fraction(3), Fraction(-4)],
+        [Fraction(1), Fraction(-3), Fraction(2), Fraction(3)],
+        [Fraction(1), Fraction(1), Fraction(1), Fraction(2)],
+        [Fraction(5), Fraction(2), Fraction(-1), Fraction(2)]
+    ]
+    A = Matrix(matrix)
+    minor_1_1 = [
+        [(1, 1), (3, 1), (-4, 1)],
+        [(1, 1), (1, 1), (2, 1)],
+        [(5, 1), (-1, 1), (2, 1)]
+    ]
+    minor_0_2 = [
+        [(1, 1), (-3, 1), (3, 1)],
+        [(1, 1), (1, 1), (2, 1)],
+        [(5, 1), (2, 1), (2, 1)]
+    ]
+    minor_3_3 = [
+        [(1, 1), (2, 1), (3, 1)],
+        [(1, 1), (-3, 1), (2, 1)],
+        [(1, 1), (1, 1), (1, 1)],
+    ]
+    minor_0_0 = [
+        [(-3, 1), (2, 1), (3, 1)],
+        [(1, 1), (1, 1), (2, 1)],
+        [(2, 1), (-1, 1), (2, 1)]
+    ]
+    assert A.minor(1, 1).get_matrix_frac_values() == minor_1_1
+    assert A.minor(0, 2).get_matrix_frac_values() == minor_0_2
+    assert A.minor(3, 3).get_matrix_frac_values() == minor_3_3
+    assert A.minor(0, 0).get_matrix_frac_values() == minor_0_0
+
+
+@pytest.mark.skipif(matrix_version_num < 1.0, reason="Functionality is not supported in this version")
+def test_matrix_inverse_2x2():
+    A = Matrix([
+        [1, 2],
+        [1, 4],
+    ])
+    B = [
+        [(4, 2), (-2, 2)],
+        [(-1,2), (1, 2)]
+    ]
+    C = A.inverse()
+    assert C.get_matrix_frac_values() == B
+
+
+@pytest.mark.skipif(matrix_version_num < 1.0, reason="Functionality is not supported in this version")
+def test_matrix_inverse_3x3():
+    A = Matrix([
+        [0, 2, 1],
+        [1, 0, 3],
+        [4, 5, 6]
+    ])
+    B = [
+        [(-15, 17), (-7, 17), (6, 17)],
+        [(6, 17), (-4, 17), (1, 17)],
+        [(5, 17), (8, 17), (-2, 17)],
+    ]
+    C = A.inverse()
+    assert C.get_matrix_frac_values() == B
+
+
+@pytest.mark.skipif(matrix_version_num < 1.0, reason="Functionality is not supported in this version")
+def test_matrix_inverse_negative_non_square_matrix():
+    A = Matrix([
+        [0, 2, 1, 4],
+        [1, 0, 3, 5],
+        [4, 5, 6, 1]
+    ])
+
+    C = A.inverse()
+    assert C is None
+
+
+@pytest.mark.skipif(matrix_version_num < 1.0, reason="Functionality is not supported in this version")
+def test_matrix_inverse_negative_determinant_zero():
+    A = Matrix([
+        [1, 2, 3],
+        [4, 5, 6],
+        [7, 8, 9]
+    ])
+
+    C = A.inverse()
+    assert C is None

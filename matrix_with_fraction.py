@@ -1,5 +1,6 @@
 from fraction import Fraction
 
+matrix_version_num = 0.8
 class Vector:
     def __init__(self, vector):
         """
@@ -82,7 +83,7 @@ class Matrix:
     def get_cols(self):
         return self.cols
 
-    def get_dimention(self):
+    def get_dimension(self):
         return self.rows, self.cols
 
     def add(self, second):
@@ -93,7 +94,7 @@ class Matrix:
         if isinstance(second, int):
             second = Fraction(second)
         if isinstance(second, Matrix):
-            if self.get_dimention() != second.get_dimention():
+            if self.get_dimension() != second.get_dimension():
                 print("ERROR: Addition is impossible cause matrices has different dimensions")
                 return None
             new_matrix = []
@@ -114,7 +115,7 @@ class Matrix:
         if isinstance(second, int):
             second = Fraction(second)
         if isinstance(second, Matrix):
-            if self.get_dimention() != second.get_dimention():
+            if self.get_dimension() != second.get_dimension():
                 print("ERROR: Subtraction is impossible cause matrices has different dimensions")
                 return None
             new_matrix = []
@@ -197,7 +198,7 @@ class Matrix:
         return Matrix(new_matrix)
 
     def trace(self):
-        if self.rows != self.cols:
+        if not self.is_square():
             print("ERROR: Matrix is not square, trace of main diagonal is not available")
             return None
         trace = Fraction(0)
@@ -223,8 +224,13 @@ class Matrix:
             new_matrix.append(line)
         return new_matrix
 
-    def is_ortogonal(self):
+    def is_square(self):
         if self.rows != self.cols:
+            return False
+        return True
+
+    def is_ortogonal(self):
+        if not self.is_square():
             return False
         e_matrix = [[(0,1) for idy in range(self.cols)] for idx in range(self.rows)]
         for idx in range(self.rows):
@@ -271,6 +277,5 @@ class Matrix:
                 line = line + " {}/{}".format(str(self.matrix[idx][idy].get_numerator()),
                                               str(self.matrix[idx][idy].get_denominator()))
             print(" {}".format(line))
-
 
 
