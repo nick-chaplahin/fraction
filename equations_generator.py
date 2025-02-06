@@ -93,7 +93,8 @@ class EquationGenerator:
     def generate_equation(self):
         actions = list(self.operation_probabilities.keys())
         weights = list(self.operation_probabilities.values())
-        values = [self._service_generate_value() for _ in range(self.values_num)]
+        values_num = random.randint(self.values_num[0], self.values_num[1])
+        values = [self._service_generate_value() for _ in range(values_num)]
 
         while len(values) > 1:
             i = random.randint(0, len(values) - 2)
@@ -130,6 +131,12 @@ class EquationGenerator:
             self.result = round(self.result, 4)
 
     def set_values_num(self, values):
+        if not isinstance(values, tuple):
+            raise ValueError("ERROR: values should be a tuple")
+        if len(values) != 2:
+            raise ValueError("ERROR: values should be a tuple containing exactly 2 values")
+        if values[0]> values[1]:
+            raise ValueError("ERROR: values should be a tuple (min,max)")
         self.values_num = values
 
     def get_values_num(self):
@@ -182,7 +189,7 @@ class EquationGenerator:
 
     def __init__(self):
         # Configuration parameters
-        self.values_num = 25
+        self.values_num = (20, 30)
         self.type_probabilities = [0.4, 0.4, 0.2]  # [integer, float, fraction]
         self.type_ranges = {
             "integer": (-200, 200),
@@ -217,7 +224,7 @@ class EquationGenerator:
 
 # Example Code
 equation = EquationGenerator()
-equation.set_values_num(10)
+equation.set_values_num((10, 15))
 for idx in range(5):
     equation.generate_equation()
     print("Equation: {}".format(equation.get_equation()))
