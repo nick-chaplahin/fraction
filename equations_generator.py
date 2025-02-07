@@ -55,42 +55,102 @@ class EquationGenerator:
             left['latex_str'], left['num']
         right_str, right_eval, right_latex, right_num = right['str'], right['eval_str'], \
             right['latex_str'], right['num']
-
-        try:
-            if action == 'add':
-                return f"{left_str} {self.operation_operands['add']} {right_str}", f"{left_eval} + {right_eval}", \
-                    f"{left_latex} + {right_latex}", left_num + right_num
-            elif action == 'sub':
-                return f"{left_str} {self.operation_operands['sub']} {right_str}", f"{left_eval} - {right_eval}", \
-                    f"{left_latex} - {right_latex}", left_num - right_num
-            elif action == 'multiply':
-                return f"{left_str} {self.operation_operands['multiply']} {right_str}", f"{left_eval} * {right_eval}", \
-                    f"{left_latex} * {right_latex}", left_num * right_num
-            elif action == 'divide':
-                if right_num == 0:
-                    raise ZeroDivisionError
-                return f"{left_str} {self.operation_operands['divide']} {right_str}", f"{left_eval} / {right_eval}", \
-                    f"{left_latex} / {right_latex}", left_num / right_num
-            elif action == 'power':
-                result = eval(f"{left_eval} ** {right_eval}")
-                if isinstance(result, complex):
-                    raise ValueError
-                return f"{left_str}{self.operation_operands['power']}{right_str}",\
-                    f"{left_eval} ** {right_eval}", f"{left_latex}^{{{right_latex}}}", result
-            elif action == 'logarithm':
-                if left_num <= 0 or left_num == 1 or right_num <= 0:
-                    raise ValueError
-                result = eval(f"math.log({right_eval}, {left_eval})")
-                return self.operation_operands['logarithm'].format(right_str, left_str), \
-                    f"math.log({right_eval}", f"{left_eval})", f"\\log_{{{left_latex}}}({right_latex})", result
-            elif action == 'euler_num':
-                result = eval(f"{left_eval} * math.e ** {right_eval}")
-                return self.operation_operands['euler_num'].format(left_str, right_str), \
-                    f"{left_eval} * math.e ** {right_eval}", f"{left_latex} * e^{{{right_latex}}}", result
-        except (ValueError, ZeroDivisionError, OverflowError):
-            raise ValueError
+        tmp_result = 0
+        if action == 'add':
+            if self.positive_flag:
+                try:
+                    tmp_result = left_num + right_num
+                except OverflowError:
+                    self.positive_flag = False
+                    self.error_type = "OverflowError"
+                    tmp_result = 0
+            return f"{left_str} {self.operation_operands['add']} {right_str}", f"{left_eval} + {right_eval}", \
+                f"{left_latex} + {right_latex}", tmp_result
+        elif action == 'sub':
+            if self.positive_flag:
+                try:
+                    tmp_result = left_num - right_num
+                except OverflowError:
+                    self.positive_flag = False
+                    self.error_type = "OverflowError"
+                    tmp_result = 0
+            return f"{left_str} {self.operation_operands['sub']} {right_str}", f"{left_eval} - {right_eval}", \
+                f"{left_latex} - {right_latex}", tmp_result
+        elif action == 'multiply':
+            if self.positive_flag:
+                try:
+                    tmp_result = left_num * right_num
+                except OverflowError:
+                    self.positive_flag = False
+                    self.error_type = "OverflowError"
+                    tmp_result = 0
+            return f"{left_str} {self.operation_operands['multiply']} {right_str}", f"{left_eval} * {right_eval}", \
+                f"{left_latex} * {right_latex}", tmp_result
+        elif action == 'divide':
+            if self.positive_flag:
+                try:
+                    tmp_result = left_num / right_num
+                except ZeroDivisionError:
+                    self.positive_flag = False
+                    self.error_type = "ZeroDivisionError"
+                    tmp_result = 0
+                except OverflowError:
+                    self.positive_flag = False
+                    self.error_type = "OverflowError"
+                    tmp_result = 0
+            return f"{left_str} {self.operation_operands['divide']} {right_str}", f"{left_eval} / {right_eval}", \
+                f"{left_latex} / {right_latex}", tmp_result
+        elif action == 'power':
+            if self.positive_flag:
+                try:
+                    tmp_result = left_num / right_num
+                except ValueError:
+                    self.positive_flag = False
+                    self.error_type = "ValueError"
+                    tmp_result = 0
+                except OverflowError:
+                    self.positive_flag = False
+                    self.error_type = "OverflowError"
+                    tmp_result = 0
+            return f"{left_str}{self.operation_operands['power']}{right_str}", \
+                f"{left_eval} ** {right_eval}", f"{left_latex}^{{{right_latex}}}", tmp_result
+        elif action == 'logarithm':
+            if self.positive_flag:
+                try:
+                    if left_num <= 0 or left_num == 1 or right_num <= 0:
+                        self.positive_flag = False
+                        self.error_type = "ValueError"
+                        tmp_result = 0
+                    else:
+                        tmp_result = eval(f"math.log({right_eval}, {left_eval})")
+                except ValueError:
+                    self.positive_flag = False
+                    self.error_type = "ValueError"
+                    tmp_result = 0
+                except OverflowError:
+                    self.positive_flag = False
+                    self.error_type = "OverflowError"
+                    tmp_result = 0
+            return self.operation_operands['logarithm'].format(right_str, left_str), \
+                f"math.log({right_eval}", f"{left_eval})", f"\\log_{{{left_latex}}}({right_latex})", tmp_result
+        elif action == 'euler_num':
+            if self.positive_flag:
+                try:
+                    tmp_result = eval(f"{left_eval} * math.e ** {right_eval}")
+                except ValueError:
+                    self.positive_flag = False
+                    self.error_type = "ValueError"
+                    tmp_result = 0
+                except OverflowError:
+                    self.positive_flag = False
+                    self.error_type = "OverflowError"
+                    tmp_result = 0
+            return self.operation_operands['euler_num'].format(left_str, right_str), \
+                f"{left_eval} * math.e ** {right_eval}", f"{left_latex} * e^{{{right_latex}}}", tmp_result
 
     def generate_equation(self):
+        self.positive_flag = True
+        self.error_type = ""
         actions = list(self.operation_probabilities.keys())
         weights = list(self.operation_probabilities.values())
         values_num = random.randint(self.values_num[0], self.values_num[1])
@@ -115,21 +175,21 @@ class EquationGenerator:
                 values.insert(i, left)
                 continue
 
-        try:
-            self.result = eval(values[0]['eval_str'])
-            self.equation = values[0]['str']
-
-            self.latex_equation = f"${values[0]['latex_str']}$"
-        except(ZeroDivisionError, OverflowError):
-            print(f"ERROR: {values[0]['eval_str']}")
-            print(f"ERROR: {self.latex_equation}")
-
-        # Convert result to appropriate type
-        if isinstance(self.result, fractions.Fraction):
-            self.result = float(self.result) if self.result.denominator != 1 else int(self.result)
-        elif isinstance(self.result, float):
-            self.result = round(self.result, 4)
-
+        self.equation = values[0]['str']
+        self.latex_equation = f"${values[0]['latex_str']}$"
+        if self.positive_flag:
+            try:
+                self.result = eval(values[0]['eval_str'])
+            except ZeroDivisionError:
+                self.result = 0
+                self.positive_flag = False
+                self.error_type = "ZeroDivisionError"
+            except OverflowError:
+                self.result = 0
+                self.positive_flag = False
+                self.error_type = "OverflowError"
+        else:
+            self.result = 0
     def set_values_num(self, values):
         if not isinstance(values, tuple):
             raise ValueError("ERROR: values should be a tuple")
@@ -185,11 +245,11 @@ class EquationGenerator:
         return self.latex_equation
 
     def get_result(self):
-        return self.result
+        return self.positive_flag, self.result, self.error_type
 
     def __init__(self):
         # Configuration parameters
-        self.values_num = (20, 30)
+        self.values_num = (20, 25)
         self.type_probabilities = [0.4, 0.4, 0.2]  # [integer, float, fraction]
         self.type_ranges = {
             "integer": (-200, 200),
@@ -215,6 +275,8 @@ class EquationGenerator:
             'euler_num': '{} * e^{}'
         }
         self.expression_probability = 0.3
+        self.positive_flag = True
+        self.error_type = ""
         self.equation = ""
         self.latex_equation = ""
         self.result = 0
@@ -229,13 +291,15 @@ for idx in range(5):
     equation.generate_equation()
     print("Equation: {}".format(equation.get_equation()))
     print("LaTeX Equation: {}".format(equation.get_latex_equation()))
-    print("Result: {}".format(equation.get_result()))
+    result = equation.get_result()
+    print(" Positive_Test: {} \n Result: {} \n ExpectedErrorType: {}".format(result[0], result[1], result[2]))
+
 operation_text_operands = {
     'add': 'add',
     'sub': 'sub',
     'multiply': 'multiply by',
     'divide': 'divide by',
-    'power': 'power to',
+    'power': ' power to ',
     'logarithm': 'logarithm of {} base {}',
     'euler_num': '{} multiply by e power to {}'
 }
@@ -244,4 +308,5 @@ for idx in range(5):
     equation.generate_equation()
     print("Equation: {}".format(equation.get_equation()))
     print("LaTeX Equation: {}".format(equation.get_latex_equation()))
-    print("Result: {}".format(equation.get_result()))
+    result = equation.get_result()
+    print(" Positive_Test: {} \n Result: {} \n ExpectedErrorType: {}".format(result[0], result[1], result[2]))
