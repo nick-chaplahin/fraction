@@ -203,6 +203,7 @@ class EquationGenerator:
 
         self.equation = values[0]['str']
         self.latex_equation = f"${values[0]['latex_str']}$"
+        self.eval_equation = values[0]['eval_str']
         if self.positive_flag:
             try:
                 self.result = eval(values[0]['eval_str'])
@@ -271,6 +272,9 @@ class EquationGenerator:
     def get_latex_equation(self):
         return self.latex_equation
 
+    def get_eval_equation(self):
+        return self.eval_equation
+
     def get_result(self):
         return self.positive_flag, self.result, self.error_type
 
@@ -334,6 +338,7 @@ operation_text_operands = {
 equation.set_operation_operands(operation_text_operands)
 for idx in range(500):
     equation.generate_equation()
+    print("Equation for Eval : {}".format(equation.get_eval_equation()))
     print("Equation: {}".format(equation.get_equation()))
     print("LaTeX Equation: {}".format(equation.get_latex_equation()))
     result = equation.get_result()
