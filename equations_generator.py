@@ -120,8 +120,8 @@ class EquationGenerator:
                     self.positive_flag = False
                     self.error_type = "ZeroDivisionError"
                     tmp_result = 0
-            return f"{left_str}{action_description}({right_str})", \
-                f"{left_eval} ** ({right_eval})", f"{left_latex}^{{{right_latex}}}", tmp_result
+            return f"{left_str}{action_description}{right_str}", \
+                f"{left_eval} ** {right_eval}", f"{left_latex}^{right_latex}", tmp_result
         elif action == 'logarithm':
             if self.positive_flag:
                 try:
@@ -156,7 +156,7 @@ class EquationGenerator:
         elif action == 'euler_num':
             if self.positive_flag:
                 try:
-                    tmp_result = eval(f"{left_eval} * math.exp ({right_eval})")
+                    tmp_result = eval(f"{left_eval} * math.e ** {right_eval}")
                 except ValueError:
                     self.positive_flag = False
                     self.error_type = "ValueError"
@@ -174,7 +174,7 @@ class EquationGenerator:
                     self.error_type = "ZeroDivisionError"
                     tmp_result = 0
             return action_description.format(left_str, right_str), \
-                f"{left_eval} * math.exp ({right_eval})", f"{left_latex} * e^{{{right_latex}}}", tmp_result
+                f"{left_eval} * math.e ** {right_eval}", f"{left_latex} * e^{right_latex}", tmp_result
 
     def _service_clean(self):
         self.positive_flag = True
@@ -303,7 +303,7 @@ class EquationGenerator:
             'divide': '/',
             'power': ' ** ',
             'logarithm': 'log({}, {})',
-            'euler_num': '{} * e^({})'
+            'euler_num': '{} * e^{}'
         }
         self.expression_probability = 0.3
         self.positive_flag = True
@@ -332,8 +332,8 @@ operation_text_operands = {
     'multiply': ['multiply by', 'mul', '*', 'x'],
     'divide': ['divide by', 'div', ':', '/'],
     'power': [' power to ', '^', '**'],
-    'logarithm': ['logarithm of {} base ({})', 'log({},{})', 'log_({}) ({})', 'logarithm ({}) base ({})'],
-    'euler_num': ['{} multiply by e power to ({})', '{} mul e^({})', '{} * e^({})', '{} mul by e ** ({})']
+    'logarithm': ['logarithm of ({}) base ({})', 'log({},{})', 'log_({}) ({})', 'logarithm ({}) base ({})'],
+    'euler_num': ['{} multiply by e power to {}', '{} mul e^{}', '{} * e^{}', '{} mul by e ** {}']
 }
 equation.set_operation_operands(operation_text_operands)
 for idx in range(500):
