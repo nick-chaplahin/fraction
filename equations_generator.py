@@ -24,7 +24,53 @@ import random
 
 
 class EquationGenerator:
+
+    def __init__(self):
+        # Configuration parameters
+        self.values_num = (20, 25)
+        self.type_probabilities = [0.4, 0.4, 0.2]  # [integer, float, fraction]
+        self.type_ranges = {
+            "integer": (-200, 200),
+            "float": (-200.0, 200.0),
+            "fraction": ((-200, 200), (-400, 400))
+        }
+        self.operation_probabilities = {
+            'add': 0.25,
+            'sub': 0.25,
+            'multiply': 0.15,
+            'divide': 0.15,
+            'power': 0.1,
+            'logarithm': 0.05,
+            'euler_num': 0.05
+        }
+        self.operation_operands = {
+            'add': '+',
+            'sub': '-',
+            'multiply': '*',
+            'divide': '/',
+            'power': ' ** ',
+            'logarithm': 'log({}, {})',
+            'euler_num': '{} * e^({})'
+        }
+        self.expression_probability = 0.3
+        self.positive_flag = True
+        self.error_type = ""
+        self.equation = ""
+        self.latex_equation = ""
+        self.eval_equation = ""
+        self.result = 0
+        # Generate equation
+        self.generate_equation()
+
     def _service_generate_value(self):
+        """
+           According to self.type_probabilities selects value of variable type. Then generates a 'random' value
+        withing configured boundaries for a type self.type_ranges.
+        :return:
+        - string representation of the value,
+        - LaTex representation of the value in String format,
+        - numerical representation of the value, for fractions in fractions.Fraction type
+        """
         types = list(self.type_ranges.keys())
         value_type = random.choices(types, weights=self.type_probabilities)[0]
 
@@ -51,15 +97,38 @@ class EquationGenerator:
                     'latex_str': f"\\frac{{{num.numerator}}}{{{num.denominator}}}", 'num': num}
 
     def _service_apply_action(self, left, right, action):
+        """
+            Procedure to generate a part of equation around single operator. Each operation schematically can be
+        represented as '{} action {}'. So left is left operand (value or part of equation), right is right operand
+        (value or part of the equation), and action is an operator.
+           Note: can be specific cases like exponent and log.
+        exponent is e^{}, to simplify code it is being build as {left} * e^{right}. TBD - add dynamic selection of
+        operand instead of '*'
+        log is log({value}, {base}), where {base} = {left} and {value} = {right}
+
+        :param left: left operand for action
+        :param right: right operand for action
+        :param action: math operation
+        :return:
+           - String of math operation description where action is replaced by 'random' "self.operation_operands" for this
+        action
+           - Ready-for-Python-eval-string of {left operand} {action} {right operand} in python math format.
+        (exponent = {lef}*math.e ** ({right}) log = math.log({right}, {left}).
+           - String that represents equation in LaTeX format
+           - Computed result of this peace of equation if computable, or 0 if not.
+        """
         left_str, left_eval, left_latex, left_num = left['str'], left['eval_str'], \
             left['latex_str'], left['num']
         right_str, right_eval, right_latex, right_num = right['str'], right['eval_str'], \
             right['latex_str'], right['num']
-        tmp_result = 0
+        # 'Randomly' selecting one of textual representation of the action from configurable operation_operands dict
         if isinstance(self.operation_operands[action], list):
             action_description = random.choice(self.operation_operands[action])
         else:
             action_description = self.operation_operands[action]
+        # To store result of calculation of this peace of equation, if computable
+        tmp_result = 0
+        # For each configured action type forming string with eqaution peace and trying to compute it.
         if action == 'add':
             if self.positive_flag:
                 try:
@@ -123,6 +192,14 @@ class EquationGenerator:
             return f"{left_str}{action_description}{right_str}", \
                 f"{left_eval} ** {right_eval}", f"{left_latex}^{right_latex}", tmp_result
         elif action == 'logarithm':
+            """
+               In math logarithm is LOG_base_EXPRESSION, this is why {base} = {left} and {expression} = {right}
+            In Python logarithm is math.log({expression}, {base}).  Keep this in mind
+            In LaTeX logarithm is \log_base expression. 
+               Important!: In LaTeX {base} must be wrapped to {{{ }}} because math.log treats all
+            {left} expression as {base}, and expression must be wrapped in ( ) because math.log treats all {right} 
+            as expression.
+            """
             if self.positive_flag:
                 try:
                     if isinstance(left_num, complex) or isinstance(right_num, complex):
@@ -154,6 +231,11 @@ class EquationGenerator:
             return action_description.format(right_str, left_str), \
                 f"math.log({right_eval}, {left_eval})", f"\\log_{{{left_latex}}}({right_latex})", tmp_result
         elif action == 'euler_num':
+            """
+               To avoid misunderstanding, exponent is e^{expression}, since this format is {left} * e ** {right} it
+            will be more correct to call e euler num because formed and calculated expression 'num * e^ num'
+            TBD:  make '*' operation configurable or 'random' selection between '+=*/'. 
+            """
             if self.positive_flag:
                 try:
                     tmp_result = eval(f"{left_eval} * math.e ** ({right_eval})")
@@ -177,6 +259,11 @@ class EquationGenerator:
                 f"{left_eval} * math.e ** ({right_eval})", f"{left_latex} * e^{{{right_latex}}}", tmp_result
 
     def _service_clean(self):
+        """
+        Since Class keeps its values to be able to called as many time as needed  - here clearing 'returns'.
+        :return:
+        none
+        """
         self.positive_flag = True
         self.error_type = ""
         self.eval_equation = ""
@@ -184,6 +271,28 @@ class EquationGenerator:
         self.latex_equation = ""
 
     def generate_equation(self):
+        """
+           Generates equation in the following way:
+        1. 'Randomly' defines list of values to use.
+        2. 'Randomly' defines an action from list of actions
+        3. 'Randomly selects 2 elements of 'values' and creates an expression with them. Used values removed
+        4. Adds 'expression as value back to values.
+        5. IMPORTANT:  if one generated expression is 'a + b' and other is 'c + d',
+           and they are selected as operands for action '*', then final  expression will be 'a + b * c + d'.
+           Unless during generation expression_probability happened, and if it happened to 'a+b' it become '(a+b)' and ]
+           then final expression will be (a+b) * c + d
+        Defines state of the class instance with :
+        :self.positive_flag: If True - expression is for positive test and expected result = self.result. If False -
+           it is Negative Test and return saying that equation can not be calculated due to self.error_type
+        :self.error_type: Error type for Negative test equation.
+        :self.equation: String representation of equation where operands selected from self.operation_operands variants
+        :self.eval_equation: String representation of equation in 'ready for python eval' format
+        :self.latex_equation: String representation of LaTeX format.
+        :self.result: Expected result for Positive tests or 0 for Negative
+
+        :return:
+        none
+        """
         self._service_clean()
         actions = list(self.operation_probabilities.keys())
         weights = list(self.operation_probabilities.values())
@@ -218,6 +327,7 @@ class EquationGenerator:
         else:
             self.result = 0
 
+    # ===== Setters and Getters to configure class and get the result.=====
     def set_values_num(self, values):
         if not isinstance(values, tuple):
             raise ValueError("ERROR: values should be a tuple")
@@ -278,43 +388,6 @@ class EquationGenerator:
     def get_result(self):
         return self.positive_flag, self.result, self.error_type
 
-    def __init__(self):
-        # Configuration parameters
-        self.values_num = (20, 25)
-        self.type_probabilities = [0.4, 0.4, 0.2]  # [integer, float, fraction]
-        self.type_ranges = {
-            "integer": (-200, 200),
-            "float": (-200.0, 200.0),
-            "fraction": ((-200, 200), (-400, 400))
-        }
-        self.operation_probabilities = {
-            'add': 0.25,
-            'sub': 0.25,
-            'multiply': 0.15,
-            'divide': 0.15,
-            'power': 0.1,
-            'logarithm': 0.05,
-            'euler_num': 0.05
-        }
-        self.operation_operands = {
-            'add': '+',
-            'sub': '-',
-            'multiply': '*',
-            'divide': '/',
-            'power': ' ** ',
-            'logarithm': 'log({}, {})',
-            'euler_num': '{} * e^({})'
-        }
-        self.expression_probability = 0.3
-        self.positive_flag = True
-        self.error_type = ""
-        self.equation = ""
-        self.latex_equation = ""
-        self.eval_equation = ""
-        self.result = 0
-        # Generate equation
-        self.generate_equation()
-
 
 # Example Code
 equation = EquationGenerator()
@@ -336,7 +409,7 @@ operation_text_operands = {
     'euler_num': ['{} multiply by e power to ({})', '{} mul e^({})', '{} * e^({})', '{} mul by e ** ({})']
 }
 equation.set_operation_operands(operation_text_operands)
-for idx in range(500):
+for idx in range(5):
     equation.generate_equation()
     print("Equation for Eval : {}".format(equation.get_eval_equation()))
     print("Equation: {}".format(equation.get_equation()))
