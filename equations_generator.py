@@ -11,11 +11,11 @@ Configurable:
 - operations of equation.  On adding new operations add its support to _service_apply_action()
 - probabilities of operands to appear in equation
 
-returns:
-- equation in string format
-- result of equation
-- equation in LaTeX format   (on adding new operation add support for LaTeX in  _service_apply_action()
-
+Can be read:
+- equation in string format with textual description
+- equation in Python math format ready for eval/calculation
+- equation in LaTeX format
+- result of equation calculation, type of Test (Positive/Negative) and error type for Negative.
 """
 
 import fractions
@@ -386,6 +386,14 @@ class EquationGenerator:
         return self.eval_equation
 
     def get_result(self):
+        """
+
+        :return:
+        - positive test flag: if True - test is Positive, otherwise Negative
+        - result: Numeric value for equation result if equation computable, and 0 is not
+        - error type: Type of error that raised during calculation, can be compared to AI's replies if
+           error types returned
+        """
         return self.positive_flag, self.result, self.error_type
 
 
