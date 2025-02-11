@@ -1,6 +1,11 @@
+"""
+Copyright by Nick Chaplahin 2024. All rights reserved, but you can use it, if do not forget to mention me as an author.
+Part of Entire Math project.
+"""
 from fraction import Fraction
 
-matrix_version_num = 0.8
+matrix_version_num = 1.0
+
 class Vector:
     def __init__(self, vector):
         """
@@ -54,6 +59,11 @@ class Vector:
                 new_vector.append(tmp)
             return Vector(new_vector)
 
+    def get_vector_absolute_values(self):
+        new_vector = []
+        for idx in range(self.rows):
+            new_vector.append(self.vector[idx].get_absolute_result())
+        return new_vector
 
 class Matrix:
     def __init__(self, matrix):
@@ -214,6 +224,61 @@ class Matrix:
                 sum = sum.add(self.matrix[idx][idy].mul(self.matrix[idx][idy]))
         sum.bring_to_general()
         return sum.get()
+
+
+    def minor(self, row, col):
+        sub_matrix = [row[:col] + row[col + 1:] for row in self.matrix[:row]+self.matrix[row+1:]]
+        return Matrix(sub_matrix)
+
+    def determinant(self):
+        if not self.is_square():
+            print("ERROR: Matrix is not square, determinant not calculable")
+            return None
+        if self.rows < 3:
+            if self.rows == 0:
+                return None
+            if self.rows == 1:
+                return self.matrix[0][0]
+            if self.rows == 2:
+                return self.matrix[0][0].mul(self.matrix[1][1]).sub(self.matrix[1][0].mul(self.matrix[0][1]))
+        if self.rows == 3:
+            return self.matrix[0][0].mul(self.matrix[1][1]).mul(self.matrix[2][2]).add(
+                self.matrix[1][0].mul(self.matrix[2][1]).mul(self.matrix[0][2])).add(
+                self.matrix[2][0].mul(self.matrix[0][1]).mul(self.matrix[1][2])).sub(
+                self.matrix[2][0].mul(self.matrix[1][1]).mul(self.matrix[0][2])).sub(
+                self.matrix[1][0].mul(self.matrix[0][1]).mul(self.matrix[2][2])).sub(
+                self.matrix[0][0].mul(self.matrix[2][1]).mul(self.matrix[1][2]))
+        else:
+            determinant = Fraction(0)
+            for idx in range(self.cols):
+                sub_matrix = self.minor(0, idx)
+                determinant = determinant.add(self.matrix[0][idx].mul(sub_matrix.determinant().mul((-1) ** idx)))
+            return determinant
+
+    def inverse(self):
+        if not self.is_square():
+            print("ERROR: Matrix is not square, determinant not calculable")
+            return None
+        matrix_determinant = self.determinant()
+        if matrix_determinant is None:
+            print("ERROR: Determinant is not calculated.")
+            return None
+        if matrix_determinant.get() == (0, 1):
+            print("WARNING: Determinant is 0, matrix is not invertable.")
+            return None
+        determinant_inverted = Fraction(1).div(matrix_determinant)
+        determinant_inverted.bring_to_general()
+        transposed_matrix = self.transpose()
+        matrix_algebraic_additions = []
+        for idx in range(self.rows):
+            line = []
+            for idy in range(self.cols):
+                minor_determinant = transposed_matrix.minor(idx,idy).determinant()
+                sign = Fraction(-1).power(idx+idy)
+                line.append(sign.mul(minor_determinant).mul(determinant_inverted))
+            matrix_algebraic_additions.append(line)
+        return Matrix(matrix_algebraic_additions)
+
 
     def get(self):
         new_matrix = []

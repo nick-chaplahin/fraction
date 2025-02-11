@@ -1,3 +1,8 @@
+"""
+Copyright by Nick Chaplahin 2024. All rights reserved, but you can use it, if do not forget to mention me as an author.
+Part of Entire Math project.
+"""
+
 import random
 from matrix_with_fraction import Matrix, Vector
 from fraction import Fraction
