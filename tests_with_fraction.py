@@ -2,6 +2,7 @@ from matrix_with_fraction import *
 from fraction import Fraction
 import pytest
 
+
 # ==================== Tests for Fraction =====================
 def test_fraction_create_from_int():
     a = Fraction(2)
@@ -263,8 +264,8 @@ def test_matrix_add_matrix():
         [Fraction(3, 4), Fraction(4, 5)]
     ])
     B = Matrix([
-        [Fraction(4,3), Fraction(2,1)],
-        [Fraction(1,2), Fraction(0, 1)]
+        [Fraction(4, 3), Fraction(2, 1)],
+        [Fraction(1, 2), Fraction(0, 1)]
     ])
     C = ([
         [(2, 1), (11, 4)],
@@ -356,26 +357,26 @@ def test_matrix_prod_int():
         [-2, 3, 5],
         [3, 4, -2]
     ])
-    l = 4
+    multiplier = 4
     C = ([
         [(-8, 1), (12, 1), (20, 1)],
         [(12, 1), (16, 1), (-8, 1)]
     ])
-    D = A.prod(l)
+    D = A.prod(multiplier)
     assert D.get() == C
 
 
 def test_matrix_prod_fraction():
     A = Matrix([
-        [Fraction(-2, 3), Fraction(3, 4), Fraction(5,6)],
+        [Fraction(-2, 3), Fraction(3, 4), Fraction(5, 6)],
         [Fraction(3, 4), Fraction(4, 5), Fraction(-2, 3)]
     ])
-    l = Fraction(1,2)
+    multiplier = Fraction(1, 2)
     C = ([
         [(-1, 3), (3, 8), (5, 12)],
         [(3, 8), (2, 5), (-1, 3)]
     ])
-    D = A.prod(l)
+    D = A.prod(multiplier)
     assert D.get() == C
 
 
@@ -478,6 +479,7 @@ def test_matrix_frobenius_norm_with_trace():
     A_frobenius_norm_base = step2.trace()
     assert A_euclid_norm_base == A_frobenius_norm_base.get()
 
+
 def test_matrix_ortogonal_i():
     A = Matrix([
         [1, 0, 0, 0],
@@ -558,7 +560,7 @@ def test_matrix_determinant_no_zeros():
 def test_matrix_determinant_negative():
     A = Matrix([
         [1, 2, 3, 4],
-        [1, -3, 2,3 ],
+        [1, -3, 2, 3],
         [1, 1, 1, 2]
     ])
     assert A.determinant() is None
@@ -677,7 +679,7 @@ def test_matrix_inverse_2x2():
     ])
     B = [
         [(4, 2), (-2, 2)],
-        [(-1,2), (1, 2)]
+        [(-1, 2), (1, 2)]
     ]
     C = A.inverse()
     assert C.get_matrix_frac_values() == B
